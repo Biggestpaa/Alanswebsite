@@ -3,23 +3,36 @@
 <html>
 <head>
   <title>Accessories</title>
-  <link rel="stylesheet" href="style.css">
   <style>
-    body { font-family: Arial; padding: 20px; }
-    h1 { text-align: center; }
-    .sub-banner { background: #222; color: #fff; padding: 10px; text-align: center; margin-bottom: 20px; }
-    .item { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 6px; }
+    body { margin: 0; font-family: Arial, sans-serif; background: #f4f4f4; }
+    header { background: #000; color: white; padding: 10px 0; text-align: center; position: relative; }
+    #banner { width: 100%; max-height: 200px; object-fit: cover; display: block; }
+    nav { background: #111; padding: 10px; display: flex; justify-content: center; gap: 20px; }
+    nav a { color: white; text-decoration: none; font-size: 18px; padding: 6px 12px; border-radius: 4px; }
+    nav a:hover, nav a.active { background-color: red; color: white; }
+    .sub-banner { background: #222; color: white; padding: 10px; text-align: center; font-size: 16px; }
+    .item { background: white; margin: 15px auto; max-width: 600px; border-radius: 6px; padding: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
   </style>
 </head>
 <body>
-  <h1>Accessories Page</h1>
+  <header>
+    <img id="banner" src="" alt="Banner">
+  </header>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="accessories.html" class="active">Accessories</a>
+    <a href="accessories.html">Accessories</a>
+  </nav>
   <div id="regBanner" class="sub-banner"></div>
   <div id="accessoriesContainer"></div>
 
   <script>
+    const regData = JSON.parse(localStorage.getItem("regData"));
+    const bannerImage = localStorage.getItem("bannerImage");
+    if (bannerImage) document.getElementById("banner").src = bannerImage;
+
     const container = document.getElementById("accessoriesContainer");
     const banner = document.getElementById("regBanner");
-    const regData = JSON.parse(localStorage.getItem("regData"));
 
     const accessories = JSON.parse(localStorage.getItem("accessories") || "[]");
     const filteredAccessories = regData ? accessories.filter(p =>
@@ -28,19 +41,20 @@
       p.year === regData.year
     ) : accessories;
 
-    if (regData) {
-      banner.textContent = `Showing accessories for ${regData.make} ${regData.model} (${regData.year})`;
-    } else {
-      banner.textContent = "Showing all accessories";
-    }
+    banner.textContent = regData ? `Showing accessories for ${regData.make} ${regData.model} (${regData.year})` : "Showing all accessories";
 
     if (filteredAccessories.length === 0) {
-      container.innerHTML = "<p>No accessories found.</p>";
+      container.innerHTML = "<p style='text-align:center;'>No accessories found.</p>";
     } else {
       filteredAccessories.forEach(p => {
         const div = document.createElement("div");
         div.className = "item";
-        div.innerHTML = `<strong>${p.name}</strong><br>Part No: ${p.partNumber}<br>€${p.price}<br>Stock: ${p.stock}`;
+        div.innerHTML = `
+          <strong>${p.name}</strong><br>
+          Part No: ${p.partNumber}<br>
+          €${p.price}<br>
+          Stock: ${p.stock}
+        `;
         container.appendChild(div);
       });
     }

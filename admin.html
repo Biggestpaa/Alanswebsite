@@ -25,10 +25,23 @@
     .item .delete { background: red; }
     .form-row { display: flex; flex-wrap: wrap; gap: 10px; }
     .form-row > div { flex: 1 1 45%; }
+    .upload-section { margin-bottom: 20px; }
   </style>
 </head>
 <body>
   <h1>Admin Panel</h1>
+
+  <div class="section upload-section">
+    <h2>Site Images</h2>
+    <label>Update Banner:</label>
+    <input type="file" id="bannerUpload" />
+    <br />
+    <label>Update Logo:</label>
+    <input type="file" id="logoUpload" />
+    <br />
+    <button onclick="updateBanner()">Save Banner</button>
+    <button onclick="updateLogo()">Save Logo</button>
+  </div>
 
   <div class="section">
     <h2>Manage Parts</h2>
@@ -41,6 +54,7 @@
       <div><input type="text" id="partYear" placeholder="Year" /></div>
       <div><input type="text" id="partCategory" placeholder="Category" /></div>
       <div><input type="text" id="partSubcategory" placeholder="Subcategory" /></div>
+      <div><input type="number" id="partStock" placeholder="Stock Quantity" /></div>
       <div><input type="file" id="partImage" /></div>
     </div>
     <button id="addPartBtn">Save Part</button>
@@ -58,6 +72,7 @@
       <div><input type="text" id="accYear" placeholder="Year" /></div>
       <div><input type="text" id="accCategory" placeholder="Category" /></div>
       <div><input type="text" id="accSubcategory" placeholder="Subcategory" /></div>
+      <div><input type="number" id="accStock" placeholder="Stock Quantity" /></div>
       <div><input type="file" id="accImage" /></div>
     </div>
     <button id="addAccessoryBtn">Save Accessory</button>

@@ -108,3 +108,23 @@ function editAccessory(index) {
   window.editAccessoryIndex = index;
   document.getElementById("addAccessoryBtn").textContent = "Update Accessory";
 }
+
+// Delete part
+function deletePart(index) {
+  let parts = JSON.parse(localStorage.getItem("parts") || "[]");
+  if (index >= 0 && index < parts.length) {
+    parts.splice(index, 1);
+    localStorage.setItem("parts", JSON.stringify(parts));
+    displayParts();
+  }
+}
+
+// Delete accessory
+function deleteAccessory(index) {
+  let accessories = JSON.parse(localStorage.getItem("accessories") || "[]");
+  if (index >= 0 && index < accessories.length) {
+    accessories.splice(index, 1);
+    localStorage.setItem("accessories", JSON.stringify(accessories));
+    displayAccessories();
+  }
+}

@@ -5,13 +5,13 @@
   <title>Parts</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    body { font-family: Arial; margin: 0; padding: 10px; background: #f0f0f0; }
-    h1 { text-align: center; margin-bottom: 20px; }
+    body { font-family: Arial; background: #f0f0f0; padding: 10px; }
     .category { background: #ddd; padding: 10px; margin-top: 20px; font-size: 20px; font-weight: bold; }
     .subcategory { margin-left: 20px; margin-top: 10px; font-size: 16px; font-weight: bold; }
     .item { background: #fff; padding: 10px; margin: 10px 0; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; }
     .item img { width: 80px; height: 80px; object-fit: contain; border: 1px solid #ccc; border-radius: 4px; }
     .item-info { flex-grow: 1; }
+    #searchBox { padding: 10px; width: 100%; max-width: 400px; margin: 20px auto; display: block; border-radius: 6px; border: 1px solid #ccc; }
   </style>
 </head>
 <body>
@@ -20,52 +20,69 @@
     <a href="accessories.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Parts</a>
     <a href="accessories.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Accessories</a>
   </nav>
-  <h1>Available Accessories</h1>
+  <h1 style="text-align:center;">Available Accessories</h1>
+  <input type="text" id="searchBox" placeholder="Search by name, number, make or model...">
   <div id="accessoriesDisplay"></div>
-  <script>
-    function groupBy(array, key) {
-      return array.reduce((result, obj) => {
-        const value = obj[key] || "Uncategorized";
-        result[value] = result[value] || [];
-        result[value].push(obj);
-        return result;
-      }, {});
-    }
+  
+<script>
+  function groupBy(array, key) {
+    return array.reduce((result, obj) => {
+      const value = obj[key] || "Uncategorized";
+      result[value] = result[value] || [];
+      result[value].push(obj);
+      return result;
+    }, {});
+  }
 
-    const container = document.getElementById("accessoriesDisplay");
+  const container = document.getElementById("accessoriesDisplay");
+  const searchBox = document.getElementById("searchBox");
+
+  function renderParts(filter = "") {
+    container.innerHTML = "";
     const accessories = JSON.parse(localStorage.getItem("accessories") || "[]");
-    if (accessories.length === 0) {
-      container.innerHTML = "<p>No accessories found. Please check back later.</p>";
-    } else {
-      const byCategory = groupBy(accessories, "category");
-      for (const cat in byCategory) {
-        const catEl = document.createElement("div");
-        catEl.className = "category";
-        catEl.textContent = cat;
-        container.appendChild(catEl);
+    const results = accessories.filter(p =>
+      (p.name || "").toLowerCase().includes(filter) ||
+      (p.partNumber || "").toLowerCase().includes(filter) ||
+      (p.make || "").toLowerCase().includes(filter) ||
+      (p.model || "").toLowerCase().includes(filter)
+    );
+    if (results.length === 0) {
+      container.innerHTML = "<p>No matching accessories found.</p>";
+      return;
+    }
+    const byCategory = groupBy(results, "category");
+    for (const cat in byCategory) {
+      const catEl = document.createElement("div");
+      catEl.className = "category";
+      catEl.textContent = cat;
+      container.appendChild(catEl);
 
-        const bySub = groupBy(byCategory[cat], "subcategory");
-        for (const sub in bySub) {
-          const subEl = document.createElement("div");
-          subEl.className = "subcategory";
-          subEl.textContent = sub;
-          container.appendChild(subEl);
+      const bySub = groupBy(byCategory[cat], "subcategory");
+      for (const sub in bySub) {
+        const subEl = document.createElement("div");
+        subEl.className = "subcategory";
+        subEl.textContent = sub;
+        container.appendChild(subEl);
 
-          bySub[sub].forEach(part => {
-            const item = document.createElement("div");
-            item.className = "item";
-            const img = document.createElement("img");
-            img.src = acc.image || "";
-            const info = document.createElement("div");
-            info.className = "item-info";
-            info.innerHTML = `<strong>${acc.name}</strong><br>Part No: ${acc.partNumber}<br>€${acc.price}<br>Stock: ${acc.stock}`;
-            item.appendChild(img);
-            item.appendChild(info);
-            container.appendChild(item);
-          });
-        }
+        bySub[sub].forEach(part => {
+          const item = document.createElement("div");
+          item.className = "item";
+          const img = document.createElement("img");
+          img.src = acc.image || "";
+          const info = document.createElement("div");
+          info.className = "item-info";
+          info.innerHTML = `<strong>${acc.name}</strong><br>Part No: ${acc.partNumber}<br>€${acc.price}<br>Stock: ${acc.stock}`;
+          item.appendChild(img);
+          item.appendChild(info);
+          container.appendChild(item);
+        });
       }
     }
-  </script>
+  }
+
+  searchBox.addEventListener("input", () => renderParts(searchBox.value.toLowerCase()));
+  renderParts();
+</script>
+
 </body>
 </html>

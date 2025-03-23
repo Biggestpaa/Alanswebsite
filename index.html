@@ -2,42 +2,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Home - Toyota Parts</title>
+  <title>Home</title>
+  <link rel="stylesheet" href="style.css">
   <style>
-    body { font-family: Arial; text-align: center; padding: 50px; }
-    input { padding: 10px; font-size: 16px; width: 250px; margin: 10px; }
-    button { padding: 10px 20px; font-size: 16px; }
+    body { font-family: Arial; margin: 0; padding: 10px; background: #f0f0f0; }
+    #regForm { margin-top: 20px; text-align: center; }
+    input[type="text"] { padding: 10px; width: 250px; border-radius: 6px; border: 1px solid #ccc; }
+    button { padding: 10px 20px; background: black; color: white; border: none; border-radius: 6px; cursor: pointer; }
   </style>
-</head>
-<body>
-  <h1>Welcome to Toyota Liffey Valley Parts Store</h1>
-  <p>Enter your registration number:</p>
-  <input type="text" id="regInput" placeholder="e.g. 151D12345">
-  <button onclick="handleReg()">Continue</button>
-
   <script>
-    function handleReg() {
+    window.onload = () => {
+      const banner = localStorage.getItem('bannerImage');
+      if(banner) document.getElementById('banner').src = banner;
+      const logo = localStorage.getItem('logoImage');
+      if(logo) document.getElementById('logo').src = logo;
+    };
+
+    function checkReg() {
       const reg = document.getElementById("regInput").value.trim().toUpperCase();
       if (reg === "152D12345") {
         window.location.href = "admin.html";
-        return;
-      }
-
-      const regMap = {
-        "151D12345": { make: "Toyota", model: "Yaris", year: "2015" },
-        "191D54321": { make: "Toyota", model: "Corolla", year: "2019" }
-      };
-
-      if (regMap[reg]) {
-        const data = regMap[reg];
-        localStorage.setItem("regData", JSON.stringify(data));
-        window.location.href = "parts.html";
       } else {
-        alert("Reg not recognized. Showing all parts.");
-        localStorage.removeItem("regData");
-        window.location.href = "parts.html";
+        alert("Registration not recognized for admin access.");
       }
     }
   </script>
+</head>
+<body>
+  <nav style="background:black;padding:10px;text-align:center;">
+    <a href="index.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Home</a>
+    <a href="parts.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Parts</a>
+    <a href="accessories.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Accessories</a>
+  </nav>
+
+  <img id='banner' style='width:100%;max-height:300px;object-fit:cover;' />
+  <h1 style="text-align:center;">Welcome to Toyota Liffey Valley</h1>
+  <div id="regForm">
+    <input type="text" id="regInput" placeholder="Enter Reg Number">
+    <button onclick="checkReg()">Continue</button>
+  </div>
+  <div style="text-align:center;margin-top:20px;">
+    <img id='logo' style='width:100px' />
+  </div>
 </body>
 </html>

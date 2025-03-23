@@ -17,12 +17,12 @@
 <body>
   <nav style="background:black;padding:10px;text-align:center;">
     <a href="index.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Home</a>
-    <a href="accessories.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Parts</a>
+    <a href="parts.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Parts</a>
     <a href="accessories.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Accessories</a>
   </nav>
-  <h1 style="text-align:center;">Available Accessories</h1>
+  <h1 style="text-align:center;">Available Parts</h1>
   <input type="text" id="searchBox" placeholder="Search by name, number, make or model...">
-  <div id="accessoriesDisplay"></div>
+  <div id="partsDisplay"></div>
   
 <script>
   function groupBy(array, key) {
@@ -34,20 +34,20 @@
     }, {});
   }
 
-  const container = document.getElementById("accessoriesDisplay");
+  const container = document.getElementById("partsDisplay");
   const searchBox = document.getElementById("searchBox");
 
   function renderParts(filter = "") {
     container.innerHTML = "";
-    const accessories = JSON.parse(localStorage.getItem("accessories") || "[]");
-    const results = accessories.filter(p =>
+    const parts = JSON.parse(localStorage.getItem("accessories") || "[]");
+    const results = parts.filter(p =>
       (p.name || "").toLowerCase().includes(filter) ||
       (p.partNumber || "").toLowerCase().includes(filter) ||
       (p.make || "").toLowerCase().includes(filter) ||
       (p.model || "").toLowerCase().includes(filter)
     );
     if (results.length === 0) {
-      container.innerHTML = "<p>No matching accessories found.</p>";
+      container.innerHTML = "<p>No matching parts found.</p>";
       return;
     }
     const byCategory = groupBy(results, "category");
@@ -68,10 +68,10 @@
           const item = document.createElement("div");
           item.className = "item";
           const img = document.createElement("img");
-          img.src = acc.image || "";
+          img.src = part.image || "";
           const info = document.createElement("div");
           info.className = "item-info";
-          info.innerHTML = `<strong>${acc.name}</strong><br>Part No: ${acc.partNumber}<br>€${acc.price}<br>Stock: ${acc.stock}`;
+          info.innerHTML = `<strong>${part.name}</strong><br>Part No: ${part.partNumber}<br>€${part.price}<br>Stock: ${part.stock}`;
           item.appendChild(img);
           item.appendChild(info);
           container.appendChild(item);

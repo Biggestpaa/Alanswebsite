@@ -1,84 +1,65 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Panel</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
-    h1 { margin-bottom: 20px; }
-    .section { background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .section h2 { margin-top: 0; }
-    input[type="text"], input[type="number"], input[type="file"] {
-      width: 100%; padding: 8px; margin: 5px 0 10px; border: 1px solid #ccc; border-radius: 4px;
-    }
-    button { padding: 10px 20px; background: black; color: white; border: none; border-radius: 4px; cursor: pointer; }
-    .item-list .item {
-      background: #eee; padding: 10px; margin-bottom: 10px; border-radius: 4px; position: relative;
-    }
-    .item button {
-      margin-left: 10px;
-      background: #333;
-    }
-    .item .delete { background: red; }
-    .form-row { display: flex; flex-wrap: wrap; gap: 10px; }
-    .form-row > div { flex: 1 1 45%; }
-    .upload-section { margin-bottom: 20px; }
+    .section { margin: 20px 0; padding: 10px; background: #f9f9f9; border: 1px solid #ccc; border-radius: 6px; }
+    .stock-item { background: #fff; margin: 10px 0; padding: 10px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .delete-button { background: red; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; float: right; }
+    .toggle-btn { background: #333; color: #fff; padding: 10px; cursor: pointer; border-radius: 6px; margin-bottom: 10px; }
   </style>
 </head>
 <body>
-  <h1>Admin Panel</h1>
+  <h1 style="text-align:center;">Admin Panel</h1>
 
-  <div class="section upload-section">
-    <h2>Site Images</h2>
-    <label>Update Banner:</label>
-    <input type="file" id="bannerUpload" />
-    <br />
-    <label>Update Logo:</label>
-    <input type="file" id="logoUpload" />
-    <br />
-    <button onclick="updateBanner()">Save Banner</button>
-    <button onclick="updateLogo()">Save Logo</button>
+  <div class="section">
+    <div class="toggle-btn" onclick="toggleSection('partsList')">Toggle Parts List</div>
+    <div id="partsList" style="display:none;"></div>
   </div>
 
   <div class="section">
-    <h2>Manage Parts</h2>
-    <div class="form-row">
-      <div><input type="text" id="partName" placeholder="Part Name" /></div>
-      <div><input type="text" id="partNumber" placeholder="Part Number" /></div>
-      <div><input type="number" id="partPrice" placeholder="Price (€)" /></div>
-      <div><input type="text" id="partMake" placeholder="Make" /></div>
-      <div><input type="text" id="partModel" placeholder="Model" /></div>
-      <div><input type="text" id="partYear" placeholder="Year" /></div>
-      <div><input type="text" id="partCategory" placeholder="Category" /></div>
-      <div><input type="text" id="partSubcategory" placeholder="Subcategory" /></div>
-      <div><input type="number" id="partStock" placeholder="Stock Quantity" /></div>
-      <div><input type="file" id="partImage" /></div>
-    </div>
-    <button id="addPartBtn">Save Part</button>
-    <div id="partsManager" class="item-list"></div>
+    <div class="toggle-btn" onclick="toggleSection('accessoriesList')">Toggle Accessories List</div>
+    <div id="accessoriesList" style="display:none;"></div>
   </div>
 
-  <div class="section">
-    <h2>Manage Accessories</h2>
-    <div class="form-row">
-      <div><input type="text" id="accName" placeholder="Accessory Name" /></div>
-      <div><input type="text" id="accNumber" placeholder="Accessory Number" /></div>
-      <div><input type="number" id="accPrice" placeholder="Price (€)" /></div>
-      <div><input type="text" id="accMake" placeholder="Make" /></div>
-      <div><input type="text" id="accModel" placeholder="Model" /></div>
-      <div><input type="text" id="accYear" placeholder="Year" /></div>
-      <div><input type="text" id="accCategory" placeholder="Category" /></div>
-      <div><input type="text" id="accSubcategory" placeholder="Subcategory" /></div>
-      <div><input type="number" id="accStock" placeholder="Stock Quantity" /></div>
-      <div><input type="file" id="accImage" /></div>
-    </div>
-    <button id="addAccessoryBtn">Save Accessory</button>
-    <div id="accessoriesManager" class="item-list"></div>
-  </div>
+  <script>
+    function toggleSection(id) {
+      const section = document.getElementById(id);
+      section.style.display = section.style.display === "none" ? "block" : "none";
+    }
 
-  <script src="admin-v2.js"></script>
+    function renderList(storageKey, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      const items = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      if (items.length === 0) {
+        container.innerHTML = "<p>No items found.</p>";
+        return;
+      }
+      items.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "stock-item";
+        div.innerHTML = `<strong>${item.name}</strong><br>Part No: ${item.partNumber || "N/A"}<button class="delete-button" onclick="deleteItem('${storageKey}', ${index})">Delete</button>`;
+        container.appendChild(div);
+      });
+    }
+
+    function deleteItem(key, index) {
+      const items = JSON.parse(localStorage.getItem(key) || "[]");
+      if (index >= 0 && index < items.length) {
+        items.splice(index, 1);
+        localStorage.setItem(key, JSON.stringify(items));
+        renderList(key, key === 'parts' ? 'partsList' : 'accessoriesList');
+        alert("Item deleted.");
+      }
+    }
+
+    window.onload = function() {
+      renderList("parts", "partsList");
+      renderList("accessories", "accessoriesList");
+    };
+  </script>
 </body>
 </html>

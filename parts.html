@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Parts</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .collapsible, .sub-collapsible {
+      cursor: pointer;
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      background: #000;
+      color: white;
+      margin-top: 10px;
+      text-align: left;
+      width: 100%;
+    }
+    .sub-collapsible {
+      background: #333;
+    }
+    .content, .sub-content {
+      padding-left: 20px;
+      display: none;
+      background: #eee;
+    }
+    .item {
+  overflow: auto;
+  background: #fff;
+  border-radius: 5px;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body onload="loadParts()">
+  <header>
+    <img id="banner" class="banner" src="banner.jpg" alt="Banner" />
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="parts.html">Parts</a>
+      <a href="accessories.html">Accessories</a>
+    </nav>
+  </header>
+  <main class="main">
+    <h2>Parts Catalogue</h2>
+    <div style="margin-bottom: 20px;">
+      <input type="text" id="searchInput" placeholder="Search parts by name, number, make, or model" style="width: 100%; padding: 10px; font-size: 16px;" oninput="filterItems()" />
+    </div>
+    
+    <div id="partsContainer"></div>
+  </main>
+
+  <script>
+    function toggleContent(el) {
+      el.classList.toggle("active");
+      const content = el.nextElementSibling;
+      content.style.display = content.style.display === "block" ? "none" : "block";
+    }
+
+    function loadParts() {
+      const banner = localStorage.getItem("bannerImage");
+      if (banner) document.getElementById("banner").src = banner;
+
+      const container = document.getElementById("partsContainer");
+      const parts = JSON.parse(localStorage.getItem("parts") || "[]");
+
+      const grouped = {};
+      parts.forEach(part => {
+        const cat = part.category || "Uncategorized";
+        const sub = part.subcategory || "General";
+        if (!grouped[cat]) grouped[cat] = {};
+        if (!grouped[cat][sub]) grouped[cat][sub] = [];
+        grouped[cat][sub].push(part);
+      });
+
+      for (const category in grouped) {
+        const catBtn = document.createElement("button");
+        catBtn.className = "collapsible";
+        catBtn.textContent = category;
+        catBtn.onclick = () => toggleContent(catBtn);
+
+        const catContent = document.createElement("div");
+        catContent.className = "content";
+
+        for (const sub in grouped[category]) {
+          const subBtn = document.createElement("button");
+          subBtn.className = "sub-collapsible";
+          subBtn.textContent = sub;
+          subBtn.onclick = () => toggleContent(subBtn);
+
+          const subContent = document.createElement("div");
+          subContent.className = "sub-content";
+
+          grouped[category][sub].forEach(part => {
+            const item = document.createElement("div");
+            item.className = "item";
+            
+        const img = part.image ? `<img src="${part.image}" alt="${part.name}" style='max-width:100px; display:block; margin-bottom:5px;'/>` : '';
+        item.innerHTML =
+         `${part.name} - ${part.partNumber} - €${part.price} (${part.make} ${part.model})`;
+            subContent.appendChild(item);
+          });
+
+          catContent.appendChild(subBtn);
+          catContent.appendChild(subContent);
+        }
+
+        container.appendChild(catBtn);
+        container.appendChild(catContent);
+      }
+    }
+  
+    function filterItems() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const items = document.querySelectorAll(".item");
+      items.forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(query) ? "block" : "none";
+      });
+    }
+    
+
+    function filterItems() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const items = document.querySelectorAll(".item");
+      const subSections = document.querySelectorAll(".sub-content");
+      const subButtons = document.querySelectorAll(".sub-collapsible");
+      const catSections = document.querySelectorAll(".content");
+      const catButtons = document.querySelectorAll(".collapsible");
+
+      // Hide everything first
+      items.forEach(item => item.style.display = "none");
+      subSections.forEach(sub => sub.style.display = "none");
+      catSections.forEach(cat => cat.style.display = "none");
+
+      // Reset buttons
+      subButtons.forEach(btn => btn.classList.remove("active"));
+      catButtons.forEach(btn => btn.classList.remove("active"));
+
+      // Filter and show matching parts and open their parents
+      items.forEach(item => {
+        if (item.textContent.toLowerCase().includes(query)) {
+          item.style.display = "block";
+          let subContent = item.closest(".sub-content");
+          if (subContent) {
+            subContent.style.display = "block";
+            let subBtn = subContent.previousElementSibling;
+            if (subBtn) subBtn.classList.add("active");
+
+            let catContent = subContent.closest(".content");
+            if (catContent) {
+              catContent.style.display = "block";
+              let catBtn = catContent.previousElementSibling;
+              if (catBtn) catBtn.classList.add("active");
+            }
+          }
+        }
+      });
+    }
+    
+</script>
+</body>
+</html>

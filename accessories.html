@@ -2,65 +2,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Accessories</title>
+  <title>Parts</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: Arial; background: #f0f0f0; padding: 10px; }
+    .category { background: #ddd; padding: 10px; margin-top: 20px; font-size: 20px; font-weight: bold; }
+    .subcategory { margin-left: 20px; margin-top: 10px; font-size: 16px; font-weight: bold; }
+    .item { background: #fff; padding: 10px; margin: 10px 0; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; }
+    .item img { width: 80px; height: 80px; object-fit: contain; border: 1px solid #ccc; border-radius: 4px; }
+    .item-info { flex-grow: 1; }
+    #searchBox { padding: 10px; width: 100%; max-width: 400px; margin: 20px auto; display: block; border-radius: 6px; border: 1px solid #ccc; }
+  </style>
 </head>
-
-  <body>
-  
-<nav style="background-color:#000; display: flex; justify-content: center; padding: 10px;">
-  <a href="index.html" style="color: white; text-decoration: none; margin: 0 20px;">Home</a>
-  <a href="parts.html" style="color: white; text-decoration: none; margin: 0 20px;">Parts</a>
-  <a href="accessories.html" style="color:red; text-decoration: none; margin: 0 20px;" style="color: white; text-decoration: none; margin: 0 20px;">Accessories</a>
-</nav>
-
-  <header><img id="banner" alt="Banner" /></header>
-
-  <header>
-    <img id="banner" alt="Banner" />
-  </header>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="accessories.html" class="active">Accessories</a>
-    <a href="accessories.html">Accessories</a>
+<body>
+  <nav style="background:black;padding:10px;text-align:center;">
+    <a href="index.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Home</a>
+    <a href="accessories.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Parts</a>
+    <a href="accessories.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Accessories</a>
   </nav>
-  <div id="regBanner" class="sub-banner"></div>
-  <div id="accessoriesContainer" class="grid"></div>
+  <h1 style="text-align:center;">Available Accessories</h1>
+  <input type="text" id="searchBox" placeholder="Search by name, number, make or model...">
+  <div id="accessoriesDisplay"></div>
+  
+<script>
+  function groupBy(array, key) {
+    return array.reduce((result, obj) => {
+      const value = obj[key] || "Uncategorized";
+      result[value] = result[value] || [];
+      result[value].push(obj);
+      return result;
+    }, {});
+  }
 
-  <script>
-    const regData = JSON.parse(localStorage.getItem("regData") || "null");
-    const bannerImage = localStorage.getItem("bannerImage");
-    if (bannerImage) document.getElementById("banner").src = bannerImage;
+  const container = document.getElementById("accessoriesDisplay");
+  const searchBox = document.getElementById("searchBox");
 
-    const banner = document.getElementById("regBanner");
-    if (regData) {
-      banner.textContent = `Showing accessories for ${regData.make} ${regData.model} (${regData.year})`;
-    } else {
-      banner.textContent = "No reg found. Showing all accessories.";
-    }
-
+  function renderParts(filter = "") {
+    container.innerHTML = "";
     const accessories = JSON.parse(localStorage.getItem("accessories") || "[]");
-    const filtered = regData
-      ? accessories.filter(p => p.make === regData.make && p.model === regData.model && p.year === regData.year)
-      : accessories;
-
-    const container = document.getElementById("accessoriesContainer");
-    if (filtered.length === 0) {
-      container.innerHTML = "<p>No accessories found.</p>";
-    } else {
-      filtered.forEach(p => {
-        const box = document.createElement("div");
-        box.className = "accessory-box";
-        box.innerHTML = `
-          <img src="${p.image || ''}" alt="Image" class="part-img" />
-          <div><strong>${p.name}</strong></div>
-          <div>Part No: ${p.partNumber}</div>
-          <div>€${p.price}</div>
-          <div>Stock: ${p.stock}</div>
-        `;
-        container.appendChild(box);
-      });
+    const results = accessories.filter(p =>
+      (p.name || "").toLowerCase().includes(filter) ||
+      (p.partNumber || "").toLowerCase().includes(filter) ||
+      (p.make || "").toLowerCase().includes(filter) ||
+      (p.model || "").toLowerCase().includes(filter)
+    );
+    if (results.length === 0) {
+      container.innerHTML = "<p>No matching accessories found.</p>";
+      return;
     }
-  </script>
+    const byCategory = groupBy(results, "category");
+    for (const cat in byCategory) {
+      const catEl = document.createElement("div");
+      catEl.className = "category";
+      catEl.textContent = cat;
+      container.appendChild(catEl);
+
+      const bySub = groupBy(byCategory[cat], "subcategory");
+      for (const sub in bySub) {
+        const subEl = document.createElement("div");
+        subEl.className = "subcategory";
+        subEl.textContent = sub;
+        container.appendChild(subEl);
+
+        bySub[sub].forEach(part => {
+          const item = document.createElement("div");
+          item.className = "item";
+          const img = document.createElement("img");
+          img.src = acc.image || "";
+          const info = document.createElement("div");
+          info.className = "item-info";
+          info.innerHTML = `<strong>${acc.name}</strong><br>Part No: ${acc.partNumber}<br>€${acc.price}<br>Stock: ${acc.stock}`;
+          item.appendChild(img);
+          item.appendChild(info);
+          container.appendChild(item);
+        });
+      }
+    }
+  }
+
+  searchBox.addEventListener("input", () => renderParts(searchBox.value.toLowerCase()));
+  renderParts();
+</script>
+
 </body>
 </html>

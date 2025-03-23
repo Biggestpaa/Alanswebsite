@@ -1,1 +1,28 @@
-<!DOCTYPE html><html><head><title>Home</title><link rel='stylesheet' href='style.css'><script>window.onload = () => {const banner = localStorage.getItem('bannerImage');if(banner){document.getElementById('banner').src = banner;}const logo = localStorage.getItem('logoImage');if(logo){document.getElementById('logo').src = logo;}}</script></head><body><img id='banner' style='width:100%;max-height:300px;object-fit:cover;' /><h1>Welcome to Toyota</h1><img id='logo' style='width:100px' /></body></html>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Home</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    window.onload = () => {
+      const banner = localStorage.getItem('bannerImage');
+      if(banner) document.getElementById('banner').src = banner;
+      const logo = localStorage.getItem('logoImage');
+      if(logo) document.getElementById('logo').src = logo;
+    };
+  </script>
+</head>
+<body>
+  
+<nav style="background:black;padding:10px;text-align:center;">
+  <a href="index.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Home</a>
+  <a href="parts.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Parts</a>
+  <a href="accessories.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Accessories</a>
+</nav>
+
+  <img id='banner' style='width:100%;max-height:300px;object-fit:cover;' />
+  <h1>Welcome to Toyota</h1>
+  <img id='logo' style='width:100px' />
+</body>
+</html>

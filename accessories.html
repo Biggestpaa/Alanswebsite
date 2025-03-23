@@ -1,61 +1,53 @@
-
 <!DOCTYPE html>
 <html>
 <head>
   <title>Accessories</title>
-  <style>
-    body { margin: 0; font-family: Arial, sans-serif; background: #f4f4f4; }
-    header { background: #000; color: white; padding: 10px 0; text-align: center; position: relative; }
-    #banner { width: 100%; max-height: 200px; object-fit: cover; display: block; }
-    nav { background: #111; padding: 10px; display: flex; justify-content: center; gap: 20px; }
-    nav a { color: white; text-decoration: none; font-size: 18px; padding: 6px 12px; border-radius: 4px; }
-    nav a:hover, nav a.active { background-color: red; color: white; }
-    .sub-banner { background: #222; color: white; padding: 10px; text-align: center; font-size: 16px; }
-    .item { background: white; margin: 15px auto; max-width: 600px; border-radius: 6px; padding: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <img id="banner" src="" alt="Banner">
-  </header>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="accessories.html" class="active">Accessories</a>
-    <a href="accessories.html">Accessories</a>
-  </nav>
+  
+<nav style="background-color:#000; display:flex; justify-content:center; padding:10px;">
+  <a href="index.html" style="color:white; text-decoration:none; margin:0 20px;">Home</a>
+  <a href="parts.html" style="color:white; text-decoration:none; margin:0 20px;">Parts</a>
+  <a href="accessories.html" style="color:red; text-decoration:none; margin:0 20px;" style="color:white; text-decoration:none; margin:0 20px;">Accessories</a>
+</nav>
+
+  <header><img id="banner" alt="Banner" style="width:100%; max-height:200px; object-fit:cover;"></header>
   <div id="regBanner" class="sub-banner"></div>
-  <div id="accessoriesContainer"></div>
+  <div id="container" class="grid"></div>
 
   <script>
-    const regData = JSON.parse(localStorage.getItem("regData"));
+    const regData = JSON.parse(localStorage.getItem("regData") || "null");
     const bannerImage = localStorage.getItem("bannerImage");
     if (bannerImage) document.getElementById("banner").src = bannerImage;
 
-    const container = document.getElementById("accessoriesContainer");
     const banner = document.getElementById("regBanner");
+    if (regData) {
+      banner.textContent = "Showing accessories for " + regData.make + " " + regData.model + " (" + regData.year + ")";
+    } else {
+      banner.textContent = "No reg found. Showing all accessories.";
+    }
 
-    const accessories = JSON.parse(localStorage.getItem("accessories") || "[]");
-    const filteredAccessories = regData ? accessories.filter(p =>
-      p.make === regData.make &&
-      p.model === regData.model &&
-      p.year === regData.year
-    ) : accessories;
+    const data = JSON.parse(localStorage.getItem("accessories") || "[]");
+    const filtered = regData
+      ? data.filter(p => p.make === regData.make && p.model === regData.model && p.year === regData.year)
+      : data;
 
-    banner.textContent = regData ? `Showing accessories for ${regData.make} ${regData.model} (${regData.year})` : "Showing all accessories";
-
-    if (filteredAccessories.length === 0) {
+    const container = document.getElementById("container");
+    if (filtered.length === 0) {
       container.innerHTML = "<p style='text-align:center;'>No accessories found.</p>";
     } else {
-      filteredAccessories.forEach(p => {
-        const div = document.createElement("div");
-        div.className = "item";
-        div.innerHTML = `
-          <strong>${p.name}</strong><br>
-          Part No: ${p.partNumber}<br>
-          €${p.price}<br>
-          Stock: ${p.stock}
+      filtered.forEach(p => {
+        const box = document.createElement("div");
+        box.className = "item-box";
+        box.innerHTML = `
+          <img src="${p.image || ''}" alt="Image" class="part-img" />
+          <div><strong>${p.name}</strong></div>
+          <div>Part No: ${p.partNumber}</div>
+          <div>€${p.price}</div>
+          <div>Stock: ${p.stock}</div>
         `;
-        container.appendChild(div);
+        container.appendChild(box);
       });
     }
   </script>

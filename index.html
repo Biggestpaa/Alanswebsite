@@ -20,10 +20,18 @@
 
     function checkReg() {
       const reg = document.getElementById("regInput").value.trim().toUpperCase();
+      const regMap = {
+        "151D12345": { make: "Toyota", model: "Yaris", year: 2015 },
+        "191D54321": { make: "Toyota", model: "Corolla", year: 2019 },
+        "202D99999": { make: "Toyota", model: "RAV4", year: 2020 }
+      };
       if (reg === "152D12345") {
         window.location.href = "admin.html";
+      } else if (regMap[reg]) {
+        localStorage.setItem("regData", JSON.stringify(regMap[reg]));
+        window.location.href = "parts.html";
       } else {
-        alert("Registration not recognized for admin access.");
+        alert("Registration not recognized.");
       }
     }
   </script>

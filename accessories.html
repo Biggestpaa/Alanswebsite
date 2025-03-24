@@ -116,5 +116,39 @@
       }
     </script>
     
+
+<script>
+  const regData = JSON.parse(localStorage.getItem("regData") || "null");
+  const banner = document.getElementById("regBanner");
+  if (regData) {
+    banner.textContent = `Showing items for ${regData.make} ${regData.model} (${regData.year})`;
+  } else {
+    banner.textContent = "No registration selected. Showing all items.";
+  }
+
+  const raw = JSON.parse(localStorage.getItem("accessories") || "[]");
+  const filtered = regData
+    ? raw.filter(p => p.make === regData.make && p.model === regData.model && p.year === regData.year)
+    : raw;
+
+  const container = document.getElementById("container");
+  if (filtered.length === 0) {
+    container.innerHTML = "<p style='text-align:center;'>No items found for selected vehicle.</p>";
+  } else {
+    filtered.forEach(p => {
+      const box = document.createElement("div");
+      box.className = "item-box";
+      box.innerHTML = `
+        <img src="${p.image || ''}" alt="Image" class="part-img" />
+        <div><strong>${p.name}</strong></div>
+        <div>Part No: ${p.partNumber}</div>
+        <div>€${p.price}</div>
+        <div>Stock: ${p.stock}</div>
+      `;
+      container.appendChild(box);
+    });
+  }
+</script>
+
 </body>
 </html>

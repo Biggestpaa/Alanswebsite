@@ -20,6 +20,7 @@
     <a href="parts.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Parts</a>
     <a href="accessories.html" style="color:white;margin:0 20px;font-size:18px;text-decoration:none;">Accessories</a>
   </nav>
+<div id="subBanner" class="sub-banner"></div>
   <h1 style="text-align:center;">Available Parts</h1>
   <input type="text" id="searchBox" placeholder="Search by name, number, make or model...">
   <div id="partsDisplay"></div>
@@ -146,6 +147,30 @@
   }
 </script>
 
+
+    <script>
+      const regData = JSON.parse(localStorage.getItem("regData") || "null");
+      if (regData) {
+        const banner = document.getElementById("subBanner");
+        if (banner) {
+          banner.textContent = `Showing parts for ${regData.make} ${regData.model} (${regData.year})`;
+        }
+      }
+
+      window.onload = () => {
+        const items = document.querySelectorAll('.item-box');
+        if (regData) {
+          items.forEach(item => {
+            const make = item.getAttribute('data-make');
+            const model = item.getAttribute('data-model');
+            const year = item.getAttribute('data-year');
+            const visible = make === regData.make && model === regData.model && year === regData.year.toString();
+            item.style.display = visible ? 'block' : 'none';
+          });
+        }
+      };
+    </script>
+    
 
     <script>
       const regData = JSON.parse(localStorage.getItem("regData") || "null");

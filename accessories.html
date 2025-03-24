@@ -88,5 +88,33 @@
     searchBox.addEventListener("input", () => renderAccessories(searchBox.value.toLowerCase()));
     renderAccessories();
   </script>
+
+    <script>
+      function filterItems() {
+        const query = document.getElementById('searchBox').value.toLowerCase();
+        const items = document.querySelectorAll('.item-box');
+        let matches = 0;
+        items.forEach(item => {
+          const text = item.innerText.toLowerCase();
+          if (text.includes(query)) {
+            item.style.display = 'block';
+            matches++;
+          } else {
+            item.style.display = 'none';
+          }
+        });
+        const container = document.getElementById("container");
+        const noMatch = document.getElementById("noMatchMessage");
+        if (!noMatch) {
+          const message = document.createElement("p");
+          message.id = "noMatchMessage";
+          message.style = "text-align:center; color: red;";
+          message.innerText = "No accessories found.";
+          container.appendChild(message);
+        }
+        document.getElementById("noMatchMessage").style.display = matches ? "none" : "block";
+      }
+    </script>
+    
 </body>
 </html>

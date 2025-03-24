@@ -223,5 +223,41 @@
       };
     </script>
     
+
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const regData = JSON.parse(localStorage.getItem("regData") || "null");
+    const banner = document.getElementById("subBanner");
+
+    if (regData && banner) {
+      banner.textContent = `Showing ${document.title.toLowerCase()} for ${regData.make} ${regData.model} (${regData.year})`;
+    }
+
+    const applyFilter = () => {
+      const items = document.querySelectorAll('.item-box');
+      if (regData) {
+        items.forEach(item => {
+          const make = item.dataset.make;
+          const model = item.dataset.model;
+          const year = item.dataset.year;
+          const visible = make === regData.make && model === regData.model && year === regData.year.toString();
+          item.style.display = visible ? "block" : "none";
+        });
+      }
+    };
+
+    // Try to apply filter repeatedly in case items are loaded dynamically
+    let attempts = 0;
+    const maxAttempts = 20;
+    const interval = setInterval(() => {
+      if (document.querySelector('.item-box') || attempts >= maxAttempts) {
+        clearInterval(interval);
+        applyFilter();
+      }
+      attempts++;
+    }, 200);
+  });
+</script>
+
 </body>
 </html>

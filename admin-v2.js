@@ -1,5 +1,34 @@
 
 document.addEventListener("DOMContentLoaded", () => {
+  const renderItems = (key, containerId) => {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const items = JSON.parse(localStorage.getItem(key) || "[]");
+    container.innerHTML = "";
+
+    items.forEach((item, index) => {
+      const div = document.createElement("div");
+      div.className = "item-box";
+      div.setAttribute("data-make", item.make);
+      div.setAttribute("data-model", item.model);
+      div.setAttribute("data-year", item.year);
+
+      div.innerHTML = `
+        <strong>${item.name}</strong><br>
+        Part No: ${item.partNumber}<br>
+        €${item.price}<br>
+        Stock: ${item.stock}<br>
+        ${item.image ? `<img src="${item.image}" alt="${item.name}" style="max-width:100px;">` : ""}
+      `;
+
+      container.appendChild(div);
+    });
+  };
+
+  if (document.getElementById("partsContainer")) renderItems("parts", "partsContainer");
+  if (document.getElementById("accessoriesContainer")) renderItems("accessories", "accessoriesContainer");
+
   const saveBtn = document.getElementById("savePartBtn");
   if (saveBtn) {
     saveBtn.addEventListener("click", () => {
@@ -35,8 +64,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const existing = JSON.parse(localStorage.getItem(key) || "[]");
       existing.push(newItem);
       localStorage.setItem(key, JSON.stringify(existing));
-
       alert(`${type === "part" ? "Part" : "Accessory"} saved!`);
+      location.reload();
     });
   }
 });

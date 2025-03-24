@@ -52,5 +52,17 @@
   <div style="text-align:center;margin-top:20px;">
     <img id="logo" style="width:100px" />
   </div>
+
+<div style="text-align:center; margin-top: 10px;">
+  <button onclick="resetReg()" style="padding: 6px 12px;">Reset Registration</button>
+</div>
+<script>
+  function resetReg() {
+    localStorage.removeItem("regData");
+    alert("Registration has been reset.");
+    window.location.href = "index.html";
+  }
+</script>
+
 </body>
 </html>

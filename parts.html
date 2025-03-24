@@ -292,5 +292,40 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+  const regData = JSON.parse(localStorage.getItem("regData") || "null");
+  const banner = document.getElementById("subBanner");
+
+  if (!regData) return;
+
+  if (banner) {
+    banner.textContent = `Showing ${document.title.toLowerCase()} for ${regData.make} ${regData.model} (${regData.year})`;
+  }
+
+  const waitForItems = () => {
+    const items = document.querySelectorAll('.item-box');
+    if (!items.length) {
+      requestAnimationFrame(waitForItems);
+      return;
+    }
+
+    items.forEach(item => {
+      const make = item.dataset.make;
+      const model = item.dataset.model;
+      const year = item.dataset.year;
+      const visible =
+        make === regData.make &&
+        model === regData.model &&
+        year === regData.year.toString();
+      item.style.display = visible ? 'block' : 'none';
+    });
+  };
+
+  waitForItems();
+});
+</script>
+
 </body>
 </html>
